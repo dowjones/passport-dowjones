@@ -11,11 +11,13 @@ to your [Dow Jones Client Settings](https://dowjones.com/page-to-be-defined)
 	npm install passport-dowjones
 	npm install express
 
+For other related passport functionality, such as session management, please see the [passport.js](http://passportjs.org/) site.
+
 ## Configuration
 
 Take your credentials from the [Dow Jones Client Settings](https://dowjones.com/page-to-be-defined) section described above and initialize the strategy as follows:
 
-~~~js
+```js
 var DowJonesStrategy = require('passport-dowjones'),
     passport = require('passport');
 
@@ -25,36 +27,59 @@ var strategy = new DowJonesStrategy({
    callbackURL:  '/callback'
   },
   function(accessToken, refreshToken, extraParams, profile, done) {
-    // accessToken is the token to call Auth0 API (not needed in the most cases)
+    // accessToken is the token to call oAuth API (not needed in the most cases)
     // extraParams.id_token has the JSON Web Token
     // profile has all the information from the user
-    return done(null, profile);
+
+		// next we'll grab the api token and store it as part of the session
+		var apiToken = this.delegationToken(extraParams, 'venture_source pib_session_id').then(function(err, apiToken){
+			if(err !== undefined) {
+				return done(err);
+			}
+			// store the apiToken in session
+			session.apiToken = apiToken;
+
+			return done(null, profile);
+		});
   }
 );
 
 passport.use(strategy);
-~~~
+```
 
 ## Usage
 
-~~~js
+Create endpoints to support login and logout.
+
+First, create the login endpoint that
+
+```js
+app.get('/login',
+  passport.authenticate('dowjones', {connection: 'dj-piboauthv2'}), function (req, res) {
+    res.redirect('/login');
+  }
+});
+```
+
+Next, we'll create the callback interface that gets invoked after login completes.  Note that we get an
+API token by calling delegate passing the references
+
+```js
 app.get('/callback',
   passport.authenticate('dowjones', { failureRedirect: '/login' }),
   function(req, res) {
     if (!req.user) {
       throw new Error('user null');
     }
+
     res.redirect("/");
   }
 );
+```
 
-app.get('/login',
-  passport.authenticate('dowjones', {connection: 'PIB-Connection'}), function (req, res) {
-  res.redirect("/");
-});
-~~~
+## Calling the API
 
-This way when you go to ```/login``` you will get redirected to auth0, to a page where you can select the identity provider.
+
 
 ## Complete example
 

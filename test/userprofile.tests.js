@@ -1,10 +1,10 @@
-var auth0Profile = require('./fixtures/dj-example-profile');
+var djProfile = require('./fixtures/dj-example-profile');
 var Profile = require('../lib/Profile');
 
 describe('Profile', function () {
 
   before(function () {
-    this.profile = new Profile(auth0Profile);
+    this.profile = new Profile(djProfile);
   });
 
   [
