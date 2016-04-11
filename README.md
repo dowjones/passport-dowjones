@@ -33,7 +33,7 @@ var strategy = new DowJonesStrategy({
     // profile has all the information from the user
 
 	// next we'll grab the api token and store it as part of the session
-	var apiToken = this.delegationToken(extraParams, 'venture_source pib_session_id', function(err, apiToken) {
+	var apiToken = this.getDelegationToken(extraParams, 'pib') {
 	  if(err !== undefined) {
 	    return done(err);
 	  }
