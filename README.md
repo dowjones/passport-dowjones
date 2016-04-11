@@ -11,7 +11,8 @@ to your [Dow Jones Client Settings](https://dowjones.com/page-to-be-defined)
 	npm install passport-dowjones
 	npm install express
 
-For other related passport functionality, such as session management, please see the [passport.js](http://passportjs.org/) site.
+For other related passport functionality, such as session management, please see the [passport.js](http://passportjs.org/) site.  This
+example relies on the express-session npm package, but other session managers could be used in its place.
 
 ## Configuration
 
@@ -31,16 +32,16 @@ var strategy = new DowJonesStrategy({
     // extraParams.id_token has the JSON Web Token
     // profile has all the information from the user
 
-		// next we'll grab the api token and store it as part of the session
-		var apiToken = this.delegationToken(extraParams, 'venture_source pib_session_id').then(function(err, apiToken){
-			if(err !== undefined) {
-				return done(err);
-			}
-			// store the apiToken in session
-			session.apiToken = apiToken;
+	// next we'll grab the api token and store it as part of the session
+	var apiToken = this.delegationToken(extraParams, 'venture_source pib_session_id', function(err, apiToken) {
+	  if(err !== undefined) {
+	    return done(err);
+	  }
+	  // store the apiToken in session
+	  session.apiToken = apiToken;
 
-			return done(null, profile);
-		});
+	  return done(null, profile);
+	});
   }
 );
 
@@ -49,16 +50,14 @@ passport.use(strategy);
 
 ## Usage
 
-Create endpoints to support login and logout.
+For this application, we support login and the callback interface.  Passport supports other mechanisms to for remaining endpoints,
+but we will focus on login here.
 
 First, create the login endpoint that
 
 ```js
 app.get('/login',
-  passport.authenticate('dowjones', {connection: 'dj-piboauthv2'}), function (req, res) {
-    res.redirect('/login');
-  }
-});
+  passport.authenticate('dowjones', {connection: 'dj-piboauthv2'}));
 ```
 
 Next, we'll create the callback interface that gets invoked after login completes.  Note that we get an
