@@ -77,6 +77,14 @@ app.get('/callback',
 );
 ```
 
+## Alternate:  Authenticating using OpenID/oAuth Requests
+
+The DowJones Authentication API is built on OpenID and oAuth.  Compatible libraries can be used to perform authentication.  The
+call sequence for authentication is as follows:
+
+![DowJones Authentication Sequence Diagram](http://www.websequencediagrams.com/files/render?link=r_EJ10NaljsGPxFk033c)
+
+
 ## Calling the API
 
 
