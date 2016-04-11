@@ -84,9 +84,46 @@ call sequence for authentication is as follows:
 ![DowJones Authentication Sequence Diagram](http://www.websequencediagrams.com/files/render?link=r_EJ10NaljsGPxFk033c)
 
 
-## Calling the API
+### Authorize:  This call must honor 302 redirects per the openid spec.
 
+```
+https://sso.accounts.dowjones.com/authorize?connection=dj-piboauthv2
+    &response_type=code
+    &redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback
+    &scope=openid%20given_name%20family_name
+    &client_id=08vQuQyNrLR7ypS4irMbiE33LPLev37V
+```
 
+### Callback with the Authorization Code
+
+Your callback handler receives a 'code' query parameter.  You submit this for the access token and id token.
+
+```
+POST https://sso.accounts.dowjones.com/oauth/token
+Content-type: application/json
+{ client_id=CLIENT_ID,
+  redirect_uri=REDIRECT_URI,
+  client_secret=CLIENT_SECRET,
+  code=AUTHORIZATION_CODE,
+  grant_type=authorization_code
+}
+```
+
+### Exchange ID Token for the AuthToken
+var result = JSON.parse(body);
+
+POST https://sso.accounts.dowjones.com/delegation
+Content-type: application/json
+{ grant_type:'urn:ietf:params:oauth:grant-type:jwt-bearer',
+  client_id: this.options.clientID,
+  api_type: 'app',
+  id_token: id_token,
+  scope: 'openid pib'
+}
+
+### Grab the resulting token to submit to the API calls.
+
+At this point, you can submit the API token to DowJones APIs.
 
 ## Complete example
 
