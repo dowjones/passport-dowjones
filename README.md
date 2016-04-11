@@ -86,7 +86,7 @@ call sequence for authentication is as follows:
 
 ### Authorize:  This call must honor 302 redirects per the openid spec.
 
-```
+```js
 https://sso.accounts.dowjones.com/authorize?connection=dj-piboauthv2
     &response_type=code
     &redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback
@@ -98,7 +98,7 @@ https://sso.accounts.dowjones.com/authorize?connection=dj-piboauthv2
 
 Your callback handler receives a 'code' query parameter.  You submit this for the access token and id token.
 
-```
+```js
 POST https://sso.accounts.dowjones.com/oauth/token
 Content-type: application/json
 { client_id=CLIENT_ID,
@@ -110,6 +110,8 @@ Content-type: application/json
 ```
 
 ### Exchange ID Token for the AuthToken
+
+```js
 var result = JSON.parse(body);
 
 POST https://sso.accounts.dowjones.com/delegation
@@ -120,6 +122,7 @@ Content-type: application/json
   id_token: id_token,
   scope: 'openid pib'
 }
+```
 
 ### Grab the resulting token to submit to the API calls.
 
