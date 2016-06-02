@@ -134,8 +134,7 @@ Content-type: application/json
 
 ```js
 
-https://sso.accounts.dowjones.com/logout
-    ?token=session.id_token
+https://sso.accounts.dowjones.com/logout?token=session.id_token
 		&returnTo=http%3A%2F%2Flocalhost%3A3000%2FloggedOut
 
 ```
